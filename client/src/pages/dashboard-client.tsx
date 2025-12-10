@@ -84,9 +84,9 @@ export default function ClientDashboard() {
                     <Input id="zone" placeholder="Ej. Centro" />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="price">Presupuesto Estimado</Label>
+                    <Label htmlFor="price">Presupuesto Estimado (L)</Label>
                     <div className="relative">
-                      <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <span className="absolute left-3 top-2.5 text-muted-foreground font-bold text-sm">L</span>
                       <Input id="price" type="number" className="pl-8" placeholder="0.00" />
                     </div>
                   </div>
@@ -114,7 +114,7 @@ export default function ClientDashboard() {
               <CardTitle className="text-sm font-medium text-muted-foreground">Total Invertido</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">$2,300</div>
+              <div className="text-2xl font-bold">L 2,300</div>
             </CardContent>
           </Card>
           <Card className="shadow-sm">
@@ -169,7 +169,7 @@ export default function ClientDashboard() {
                       </div>
                     </TableCell>
                     <TableCell>{getStatusBadge(req.estado)}</TableCell>
-                    <TableCell className="text-right font-medium">${req.precioEstimado}</TableCell>
+                    <TableCell className="text-right font-medium">L {req.precioEstimado}</TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                         <span className="sr-only">Menu</span>
