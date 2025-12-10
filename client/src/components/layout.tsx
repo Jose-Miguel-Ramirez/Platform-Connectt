@@ -13,6 +13,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { Badge } from "@/components/ui/badge";
+import { NotificationsDropdown } from "./notifications-dropdown";
+import { ModeToggle } from "./mode-toggle";
+
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,9 +37,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
+            <ModeToggle />
             {user ? (
               <>
+                <NotificationsDropdown />
                 <Link href={user.rol === 'CLIENTE' ? "/dashboard-client" : "/dashboard-young"}>
                   <a className={`text-sm font-medium transition-colors hover:text-primary ${isActive(user.rol === 'CLIENTE' ? '/dashboard-client' : '/dashboard-young') ? 'text-primary' : 'text-muted-foreground'}`}>
                     Mi Dashboard
@@ -44,8 +50,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                      <Avatar className="h-8 w-8">
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full ml-2">
+                      <Avatar className="h-8 w-8 border border-border">
                         <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`} alt={user.nombre} />
                         <AvatarFallback>{user.nombre.charAt(0)}</AvatarFallback>
                       </Avatar>
@@ -79,12 +85,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
-            className="md:hidden p-2 text-foreground"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X /> : <Menu />}
-          </button>
+          <div className="flex items-center gap-2 md:hidden">
+            <ModeToggle />
+            <button 
+              className="p-2 text-foreground"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X /> : <Menu />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Nav */}
@@ -92,6 +101,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <div className="md:hidden border-t border-border bg-background p-4 flex flex-col gap-4 shadow-lg animate-in slide-in-from-top-5">
             {user ? (
               <>
+                 <div className="flex items-center justify-between p-2">
+                    <span className="text-sm font-medium">Notificaciones</span>
+                    <Badge variant="secondary">3</Badge>
+                 </div>
                  <Link href={user.rol === 'CLIENTE' ? "/dashboard-client" : "/dashboard-young"}>
                   <a onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2 text-sm font-medium p-2 hover:bg-muted rounded-md">
                     <User className="h-4 w-4" /> Mi Dashboard

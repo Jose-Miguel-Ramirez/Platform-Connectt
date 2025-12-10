@@ -16,6 +16,7 @@ import { QuizModal } from "@/components/quiz-modal";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
+import { ScheduleCalendar } from "@/components/schedule-calendar";
 
 export default function YoungDashboard() {
   const { toast } = useToast();
@@ -98,10 +99,11 @@ export default function YoungDashboard() {
         </div>
 
         <Tabs defaultValue="available" className="w-full">
-          <TabsList className="mb-6 h-auto p-1 bg-muted/30 rounded-full border border-border/50">
-            <TabsTrigger value="available" className="rounded-full px-6 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Oportunidades</TabsTrigger>
-            <TabsTrigger value="courses" className="rounded-full px-6 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Mis Cursos</TabsTrigger>
-            <TabsTrigger value="stats" className="rounded-full px-6 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Estadísticas</TabsTrigger>
+          <TabsList className="mb-6 h-auto p-1 bg-muted/30 rounded-full border border-border/50 flex-wrap justify-start overflow-auto">
+            <TabsTrigger value="available" className="rounded-full px-6 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex-1 min-w-[120px]">Oportunidades</TabsTrigger>
+            <TabsTrigger value="courses" className="rounded-full px-6 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex-1 min-w-[120px]">Mis Cursos</TabsTrigger>
+            <TabsTrigger value="agenda" className="rounded-full px-6 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex-1 min-w-[120px]">Agenda</TabsTrigger>
+            <TabsTrigger value="stats" className="rounded-full px-6 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex-1 min-w-[120px]">Estadísticas</TabsTrigger>
           </TabsList>
 
           <TabsContent value="available" className="space-y-6 animate-in fade-in duration-500">
@@ -195,6 +197,41 @@ export default function YoungDashboard() {
                 </Card>
               ))}
             </div>
+          </TabsContent>
+
+          <TabsContent value="agenda" className="animate-in fade-in duration-500">
+             <div className="grid md:grid-cols-3 gap-6">
+               <div className="md:col-span-2">
+                 <ScheduleCalendar />
+               </div>
+               <div className="space-y-4">
+                 <Card className="bg-primary/5 border-none">
+                    <CardHeader>
+                      <CardTitle className="text-lg">Próximos Recordatorios</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="flex gap-3 items-start">
+                        <div className="bg-blue-100 p-2 rounded-full text-blue-600 mt-1">
+                          <Clock className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-sm">Entrega de Proyecto</p>
+                          <p className="text-xs text-muted-foreground">En 2 días</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-3 items-start">
+                        <div className="bg-green-100 p-2 rounded-full text-green-600 mt-1">
+                          <CheckCircle className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-sm">Completar Perfil</p>
+                          <p className="text-xs text-muted-foreground">Aumenta tu visibilidad</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                 </Card>
+               </div>
+             </div>
           </TabsContent>
           
           <TabsContent value="stats" className="animate-in fade-in duration-500">
