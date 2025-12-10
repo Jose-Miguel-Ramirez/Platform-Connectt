@@ -1,11 +1,22 @@
 import { Link, useLocation } from "wouter";
-import { Menu, X, Briefcase, GraduationCap, User, LogIn } from "lucide-react";
+import { Menu, X, Briefcase, GraduationCap, User, LogIn, LogOut } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth-context";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   const isActive = (path: string) => location === path;
 
@@ -23,22 +34,48 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
-            <Link href="/dashboard-young">
-              <a className={`text-sm font-medium transition-colors hover:text-primary ${isActive('/dashboard-young') ? 'text-primary' : 'text-muted-foreground'}`}>
-                Para Jóvenes
-              </a>
-            </Link>
-            <Link href="/dashboard-client">
-              <a className={`text-sm font-medium transition-colors hover:text-primary ${isActive('/dashboard-client') ? 'text-primary' : 'text-muted-foreground'}`}>
-                Para Clientes
-              </a>
-            </Link>
-            <Link href="/auth">
-              <Button variant="default" size="sm" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 font-serif">
-                <LogIn className="h-4 w-4" />
-                Acceder
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <Link href={user.rol === 'CLIENTE' ? "/dashboard-client" : "/dashboard-young"}>
+                  <a className={`text-sm font-medium transition-colors hover:text-primary ${isActive(user.rol === 'CLIENTE' ? '/dashboard-client' : '/dashboard-young') ? 'text-primary' : 'text-muted-foreground'}`}>
+                    Mi Dashboard
+                  </a>
+                </Link>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`} alt={user.nombre} />
+                        <AvatarFallback>{user.nombre.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <DropdownMenuLabel className="font-normal">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none">{user.nombre}</p>
+                        <p className="text-xs leading-none text-muted-foreground">
+                          {user.email}
+                        </p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={logout} className="text-red-600 focus:text-red-600">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Cerrar Sesión</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <Link href="/auth">
+                <Button variant="default" size="sm" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 font-serif">
+                  <LogIn className="h-4 w-4" />
+                  Acceder
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -53,19 +90,29 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {/* Mobile Nav */}
         {isMenuOpen && (
           <div className="md:hidden border-t border-border bg-background p-4 flex flex-col gap-4 shadow-lg animate-in slide-in-from-top-5">
-            <Link href="/dashboard-young">
-              <a onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2 text-sm font-medium p-2 hover:bg-muted rounded-md">
-                <GraduationCap className="h-4 w-4" /> Jóvenes
-              </a>
-            </Link>
-            <Link href="/dashboard-client">
-              <a onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2 text-sm font-medium p-2 hover:bg-muted rounded-md">
-                <User className="h-4 w-4" /> Clientes
-              </a>
-            </Link>
-            <Link href="/auth">
-              <Button className="w-full bg-primary font-serif">Acceder</Button>
-            </Link>
+            {user ? (
+              <>
+                 <Link href={user.rol === 'CLIENTE' ? "/dashboard-client" : "/dashboard-young"}>
+                  <a onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2 text-sm font-medium p-2 hover:bg-muted rounded-md">
+                    <User className="h-4 w-4" /> Mi Dashboard
+                  </a>
+                </Link>
+                <Button 
+                  variant="destructive" 
+                  className="w-full justify-start" 
+                  onClick={() => {
+                    logout();
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  <LogOut className="mr-2 h-4 w-4" /> Cerrar Sesión
+                </Button>
+              </>
+            ) : (
+              <Link href="/auth">
+                <Button className="w-full bg-primary font-serif">Acceder</Button>
+              </Link>
+            )}
           </div>
         )}
       </nav>
@@ -89,8 +136,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <h4 className="font-bold mb-4">Enlaces Rápidos</h4>
             <ul className="space-y-2 text-muted-foreground">
               <li><Link href="/"><a className="hover:text-primary">Inicio</a></Link></li>
-              <li><Link href="/dashboard-young"><a className="hover:text-primary">Buscar Trabajo</a></Link></li>
-              <li><Link href="/dashboard-client"><a className="hover:text-primary">Contratar Servicios</a></Link></li>
+              {user && (
+                 <li>
+                   <Link href={user.rol === 'CLIENTE' ? "/dashboard-client" : "/dashboard-young"}>
+                     <a className="hover:text-primary">Mi Dashboard</a>
+                   </Link>
+                 </li>
+              )}
             </ul>
           </div>
           <div>

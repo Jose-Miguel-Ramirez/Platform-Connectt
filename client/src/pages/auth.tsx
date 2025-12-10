@@ -7,11 +7,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLocation } from "wouter";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/auth-context";
 
 export default function AuthPage() {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
+
+  // Temporary state to handle role selection in login/register
+  const [selectedRole, setSelectedRole] = useState<'CLIENTE' | 'JOVEN'>('CLIENTE');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,9 +29,8 @@ export default function AuthPage() {
         title: "Bienvenido",
         description: "Has iniciado sesión correctamente.",
       });
-      // Mock redirect based on "role" (simple toggle for prototype)
-      // In a real app, this would come from the backend response
-      setLocation("/dashboard-client"); 
+      // Use auth context login
+      login(selectedRole); 
     }, 1500);
   };
 
@@ -37,8 +41,9 @@ export default function AuthPage() {
       setIsLoading(false);
       toast({
         title: "Cuenta creada",
-        description: "Tu registro ha sido exitoso. Por favor inicia sesión.",
+        description: "Tu registro ha sido exitoso. Iniciando sesión...",
       });
+      login(selectedRole);
     }, 1500);
   };
 
@@ -73,7 +78,32 @@ export default function AuthPage() {
                       <Label htmlFor="password">Contraseña</Label>
                       <Input id="password" type="password" required className="bg-background/50" />
                     </div>
-                    <Button type="submit" className="w-full bg-primary font-serif" disabled={isLoading}>
+                     {/* Temporary Role Selection for Prototype */}
+                     <div className="space-y-2 pt-2 border-t">
+                      <Label className="text-xs text-muted-foreground">Modo de prueba: Entrar como...</Label>
+                      <div className="flex gap-2">
+                         <Button 
+                           type="button" 
+                           variant={selectedRole === 'CLIENTE' ? 'default' : 'outline'}
+                           size="sm"
+                           onClick={() => setSelectedRole('CLIENTE')}
+                           className="flex-1"
+                         >
+                           Cliente
+                         </Button>
+                         <Button 
+                           type="button" 
+                           variant={selectedRole === 'JOVEN' ? 'default' : 'outline'}
+                           size="sm"
+                           onClick={() => setSelectedRole('JOVEN')}
+                           className="flex-1"
+                         >
+                           Joven Talento
+                         </Button>
+                      </div>
+                    </div>
+
+                    <Button type="submit" className="w-full bg-primary font-serif mt-4" disabled={isLoading}>
                       {isLoading ? "Cargando..." : "Ingresar"}
                     </Button>
                   </form>
@@ -115,13 +145,19 @@ export default function AuthPage() {
                     <div className="space-y-2">
                       <Label>Soy...</Label>
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="flex items-center space-x-2 border p-3 rounded-md hover:bg-muted/50 cursor-pointer">
-                          <input type="radio" name="role" id="role-client" className="accent-primary" defaultChecked />
-                          <label htmlFor="role-client" className="cursor-pointer text-sm font-medium">Cliente</label>
+                        <div 
+                          className={`flex items-center space-x-2 border p-3 rounded-md cursor-pointer ${selectedRole === 'CLIENTE' ? 'border-primary bg-primary/5' : 'hover:bg-muted/50'}`}
+                          onClick={() => setSelectedRole('CLIENTE')}
+                        >
+                          <div className={`h-4 w-4 rounded-full border ${selectedRole === 'CLIENTE' ? 'border-[5px] border-primary' : 'border-input'}`}></div>
+                          <span className="text-sm font-medium">Cliente</span>
                         </div>
-                        <div className="flex items-center space-x-2 border p-3 rounded-md hover:bg-muted/50 cursor-pointer">
-                          <input type="radio" name="role" id="role-young" className="accent-primary" />
-                          <label htmlFor="role-young" className="cursor-pointer text-sm font-medium">Joven Talento</label>
+                        <div 
+                          className={`flex items-center space-x-2 border p-3 rounded-md cursor-pointer ${selectedRole === 'JOVEN' ? 'border-primary bg-primary/5' : 'hover:bg-muted/50'}`}
+                          onClick={() => setSelectedRole('JOVEN')}
+                        >
+                          <div className={`h-4 w-4 rounded-full border ${selectedRole === 'JOVEN' ? 'border-[5px] border-primary' : 'border-input'}`}></div>
+                          <span className="text-sm font-medium">Joven Talento</span>
                         </div>
                       </div>
                     </div>
