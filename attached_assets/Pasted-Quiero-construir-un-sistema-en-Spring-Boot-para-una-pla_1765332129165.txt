@@ -1,0 +1,30 @@
+Quiero construir un sistema en Spring Boot para una "plataforma de oficios y educación digital".
+
+Requisitos:
+
+Entidades JPA:
+User: id, nombre, email, password, rol (JOVEN, CLIENTE, ADMIN).
+Skill: id, nombre.
+YoungProfile: id, user, bio, zona, disponibilidad, lista de skills, ratingPromedio.
+ClientProfile: id, user, tipo (PERSONA, NEGOCIO), nombreComercial, zona.
+ServiceRequest: id, client, skill (tipo de servicio), descripcion, zona, fechaHora, estado (PENDIENTE, ASIGNADA, COMPLETADA, CANCELADA), precioEstimado.
+Assignment: id, serviceRequest, young, estadoAsignacion.
+Course: id, nombre, descripcion, skillAsociado, nivel.
+CourseProgress: id, course, young, porcentaje, completado.
+Review: id, serviceRequest, young, client, rating, comentario.
+Crear repositories para todas las entidades con Spring Data JPA.
+Configurar Spring Security con:
+registro y login básicos con email/password,
+roles JOVEN y CLIENTE,
+JWT puede quedar pendiente por ahora, usar sesión simple en memoria.
+Crear controladores REST:
+AuthController: /auth/register, /auth/login.
+YoungController: ver/editar perfil, listar solicitudes disponibles.
+ClientController: crear solicitudes de servicio, ver sus solicitudes.
+AssignmentController: asignar un joven a una solicitud (MVP manual).
+CourseController: listar cursos, marcar curso como completado.
+ReviewController: crear reseña.
+Usar H2 Database con configuración en application.properties.
+Crear una vista Thymeleaf sencilla:
+index.html mostrando: “Plataforma de oficios y educación digital”.
+Un listado básico de ServiceRequest en una tabla. Estructura en capas: controller, service, repository, model/entity, dto. Por favor genera las clases, interfaces y controladores necesarios siguiendo buenas prácticas. Basicamente quiero que agreguen más estructuras, como que para que se mire que es bonito, que sea elegante, por ejemplo agregar funciones de Javascript, que no tengan emojis, por ejemplo digamos tener el inicio principal, donde aparezca acerca de lo que es la web, para que sirva la aplicación, que conecta jóvenes, tales cosas, que aparezca por ejemplo una opción, donde lee registrarse, o iniciar sesión, y que depende que digamos si se registra con un perfil, ya puede ser digamos que se llame un perfil de estudiante, en este caso de empleador, de joven, o de perfil de persona que va a tomar, entonces que lleve a un dashboard diferente, por ejemplo el joven, que donde tenga las posibilidades de aceitar trabajo, no sé, de algunas cosas más, también pues que pueda ver los cursos, certificaciones, que todo sea, por ejemplo para ponerlo en un repositorio de Github, también como para que digamos que sea streaming, o sea que esté sincronizado digamos que varias personas en el Github, que digamos si se crea un perfil, entonces en este caso que puedan mostrarse a la persona en este caso, o sea que esté sincronizado, pues si yo muestro un trabajo que la otra persona vea pues, o sea ya en este caso desplegado. que tenga funcionalidades
