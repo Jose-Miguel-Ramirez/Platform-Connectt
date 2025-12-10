@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Search, Calendar, MapPin, DollarSign, Filter } from "lucide-react";
+import { Plus, Search, Calendar, MapPin, DollarSign, Filter, MoreHorizontal, Eye, Trash2, Edit } from "lucide-react";
 import { MOCK_REQUESTS, MOCK_SKILLS } from "@/lib/mock-data-extended"; // Updated import
 import { Badge } from "@/components/ui/badge";
 import { useState, useMemo } from "react";
@@ -14,6 +14,14 @@ import { useToast } from "@/hooks/use-toast";
 import { ResponsiveTable } from "@/components/responsive-table";
 import { StatsDashboard } from "@/components/stats-dashboard";
 import { ChatWidget } from "@/components/chat-widget";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function ClientDashboard() {
   const { toast } = useToast();
@@ -82,11 +90,28 @@ export default function ClientDashboard() {
     { header: "Precio", cell: (item: any) => <span className="font-medium">L {item.precioEstimado}</span>, className: "text-right" },
     { 
       header: "Acciones", 
-      cell: () => (
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-          <span className="sr-only">Menu</span>
-          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4"><path d="M3.625 7.5C3.625 8.12132 3.12132 8.625 2.5 8.625C1.87868 8.625 1.375 8.12132 1.375 7.5C1.375 6.87868 1.87868 6.375 2.5 6.375C3.12132 6.375 3.625 6.87868 3.625 7.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM13.625 7.5C13.625 8.12132 13.1213 8.625 12.5 8.625C11.8787 8.625 11.375 8.12132 11.375 7.5C11.375 6.87868 11.8787 6.375 12.5 6.375C13.1213 6.375 13.625 6.87868 13.625 7.5Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
-        </Button>
+      cell: (item: any) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <span className="sr-only">Menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+            <DropdownMenuItem>
+              <Eye className="mr-2 h-4 w-4" /> Ver Detalles
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Edit className="mr-2 h-4 w-4" /> Editar
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-red-600">
+              <Trash2 className="mr-2 h-4 w-4" /> Cancelar Solicitud
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       ),
       className: "text-right"
     }
