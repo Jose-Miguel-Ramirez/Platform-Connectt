@@ -1,7 +1,8 @@
 import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, CheckCircle2, Users, BookOpen, Briefcase } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ArrowRight, CheckCircle2, Users, BookOpen, Briefcase, Mail } from "lucide-react";
 import { Link } from "wouter";
 // Import generated image
 import heroImage from "@assets/generated_images/elegant_hero_image_of_young_professionals_learning_digital_skills.png";
@@ -56,24 +57,38 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats / Trust Section */}
+      {/* Stats / Trust Section - Updated for Startup Phase */}
       <section className="bg-primary py-12 text-primary-foreground">
         <div className="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <div className="space-y-2">
-            <div className="text-4xl font-serif font-bold">1.5k+</div>
-            <div className="text-primary-foreground/80 text-sm">Jóvenes Capacitados</div>
+            <div className="text-4xl font-serif font-bold">100%</div>
+            <div className="text-primary-foreground/80 text-sm">Talento Verificado</div>
           </div>
           <div className="space-y-2">
-            <div className="text-4xl font-serif font-bold">800+</div>
-            <div className="text-primary-foreground/80 text-sm">Proyectos Completados</div>
+            <div className="text-4xl font-serif font-bold">24/7</div>
+            <div className="text-primary-foreground/80 text-sm">Soporte Dedicado</div>
           </div>
           <div className="space-y-2">
-            <div className="text-4xl font-serif font-bold">98%</div>
-            <div className="text-primary-foreground/80 text-sm">Clientes Satisfechos</div>
+            <div className="text-4xl font-serif font-bold">0%</div>
+            <div className="text-primary-foreground/80 text-sm">Comisión de Lanzamiento</div>
           </div>
           <div className="space-y-2">
-            <div className="text-4xl font-serif font-bold">50+</div>
-            <div className="text-primary-foreground/80 text-sm">Cursos Disponibles</div>
+            <div className="text-4xl font-serif font-bold">10+</div>
+            <div className="text-primary-foreground/80 text-sm">Categorías Activas</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Popular Categories Section - New Interesting Feature */}
+      <section className="py-16 bg-muted/20">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-serif font-bold mb-8 text-center text-primary">Categorías Populares</h2>
+          <div className="flex flex-wrap justify-center gap-4">
+            {["Programación Web", "Diseño Gráfico", "Marketing Digital", "Carpintería", "Electricidad", "Plomería", "Asistencia Virtual", "Redacción"].map((cat) => (
+              <div key={cat} className="bg-background border border-border px-6 py-3 rounded-full shadow-sm hover:shadow-md hover:border-primary cursor-pointer transition-all text-sm font-medium">
+                {cat}
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -123,13 +138,33 @@ export default function Home() {
       {/* CTA Section */}
       <section className="py-24 bg-muted/30">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-primary font-serif">¿Listo para empezar?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primary font-serif">¿Listo para empezar?</h2>
+          <p className="text-muted-foreground mb-8 max-w-lg mx-auto">Únete a los primeros usuarios y obtén beneficios exclusivos de lanzamiento.</p>
           <div className="flex flex-col sm:flex-row justify-center gap-6">
             <Link href="/auth?role=joven">
               <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 font-serif h-14 px-10 text-lg shadow-lg hover:shadow-xl transition-all">
                 Únete como Talento
               </Button>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section - New Interesting Feature */}
+      <section className="py-16 bg-background border-t border-border">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="bg-primary/5 rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
+            <div className="flex-1 space-y-4 text-center md:text-left">
+              <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-2">
+                <Mail className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-2xl font-serif font-bold text-primary">Mantente Informado</h3>
+              <p className="text-muted-foreground">Recibe las últimas oportunidades y cursos directamente en tu bandeja de entrada.</p>
+            </div>
+            <div className="w-full md:w-auto flex flex-col sm:flex-row gap-2">
+              <Input placeholder="tu@email.com" className="bg-background border-primary/20 min-w-[250px]" />
+              <Button className="bg-primary font-serif">Suscribirse</Button>
+            </div>
           </div>
         </div>
       </section>
