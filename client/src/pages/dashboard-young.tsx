@@ -6,10 +6,13 @@ import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { MOCK_COURSES, MOCK_REQUESTS, MOCK_YOUNG_PROFILES, Course } from "@/lib/mock-data";
-import { Star, Clock, MapPin, CheckCircle, BookOpen, PlayCircle, Check } from "lucide-react";
+import { MOCK_COURSES_EXTENDED, MOCK_REQUESTS, MOCK_YOUNG_PROFILES, Course } from "@/lib/mock-data-extended";
+import { Star, Clock, MapPin, CheckCircle, BookOpen, PlayCircle, Check, Award } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { ChatWidget } from "@/components/chat-widget";
+import { StatsDashboard } from "@/components/stats-dashboard";
+import { QuizModal } from "@/components/quiz-modal";
 
 export default function YoungDashboard() {
   const { toast } = useToast();
@@ -19,6 +22,7 @@ export default function YoungDashboard() {
   // State for interactivity
   const [appliedJobs, setAppliedJobs] = useState<Set<number>>(new Set());
   const [activeCourse, setActiveCourse] = useState<Course | null>(null);
+  const [showQuiz, setShowQuiz] = useState(false);
   const [courseProgress, setCourseProgress] = useState<Record<number, number>>({
     1: 65,
     2: 30,
@@ -26,7 +30,6 @@ export default function YoungDashboard() {
   });
 
   const handleApply = (id: number) => {
-    // Simulate API call
     toast({
       title: "Aplicación enviada",
       description: "El cliente recibirá tu perfil. ¡Buena suerte!",
@@ -45,9 +48,9 @@ export default function YoungDashboard() {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 space-y-8">
         {/* Header Profile */}
-        <div className="bg-card rounded-xl shadow-sm border border-border p-6 mb-8 flex flex-col md:flex-row gap-6 items-start md:items-center">
+        <div className="bg-card rounded-xl shadow-sm border border-border p-6 flex flex-col md:flex-row gap-6 items-start md:items-center animate-in fade-in slide-in-from-top-4">
           <Avatar className="h-20 w-20 border-2 border-primary">
             <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.userId}`} />
             <AvatarFallback>YT</AvatarFallback>
@@ -73,18 +76,18 @@ export default function YoungDashboard() {
         </div>
 
         <Tabs defaultValue="available" className="w-full">
-          <TabsList className="mb-6">
-            <TabsTrigger value="available">Oportunidades Disponibles</TabsTrigger>
-            <TabsTrigger value="courses">Mis Cursos</TabsTrigger>
-            <TabsTrigger value="history">Historial</TabsTrigger>
+          <TabsList className="mb-6 bg-muted/50 p-1">
+            <TabsTrigger value="available" className="flex-1">Oportunidades</TabsTrigger>
+            <TabsTrigger value="courses" className="flex-1">Mis Cursos</TabsTrigger>
+            <TabsTrigger value="stats" className="flex-1">Estadísticas</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="available" className="space-y-6">
+          <TabsContent value="available" className="space-y-6 animate-in fade-in duration-500">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {pendingRequests.map(req => {
                 const isApplied = appliedJobs.has(req.id);
                 return (
-                  <Card key={req.id} className="hover:shadow-lg transition-shadow border-t-4 border-t-primary">
+                  <Card key={req.id} className="hover:shadow-lg transition-shadow border-t-4 border-t-primary flex flex-col">
                     <CardHeader>
                       <div className="flex justify-between items-start">
                         <Badge variant="outline" className="mb-2">{req.skill}</Badge>
@@ -93,7 +96,7 @@ export default function YoungDashboard() {
                       <CardTitle className="text-lg">{req.clientName}</CardTitle>
                       <CardDescription className="line-clamp-2">{req.descripcion}</CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="flex-1">
                       <div className="space-y-2 text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
                           <MapPin className="h-4 w-4" /> {req.zona}
@@ -120,27 +123,33 @@ export default function YoungDashboard() {
                 );
               })}
             </div>
+            {pendingRequests.length === 0 && (
+               <div className="text-center py-12 border-2 border-dashed rounded-xl">
+                 <p className="text-muted-foreground">No hay oportunidades disponibles en este momento.</p>
+               </div>
+            )}
           </TabsContent>
 
-          <TabsContent value="courses" className="space-y-6">
+          <TabsContent value="courses" className="space-y-6 animate-in fade-in duration-500">
             <div className="grid md:grid-cols-2 gap-6">
-              {MOCK_COURSES.map(course => (
-                <Card key={course.id} className="flex flex-col overflow-hidden">
-                  <div className="h-32 bg-secondary/20 flex items-center justify-center relative group cursor-pointer" onClick={() => handleContinueCourse(course)}>
+              {MOCK_COURSES_EXTENDED.map(course => (
+                <Card key={course.id} className="flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                  <div className="h-32 bg-secondary/20 flex items-center justify-center relative group cursor-pointer overflow-hidden" onClick={() => handleContinueCourse(course)}>
+                    <div className="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors"></div>
                     <BookOpen className="h-12 w-12 text-primary/40 group-hover:opacity-0 transition-opacity" />
-                    <PlayCircle className="h-16 w-16 text-primary absolute opacity-0 group-hover:opacity-100 transition-opacity scale-90 group-hover:scale-100" />
+                    <PlayCircle className="h-16 w-16 text-primary absolute opacity-0 group-hover:opacity-100 transition-opacity scale-90 group-hover:scale-100 duration-300" />
                   </div>
                   <CardHeader>
                     <div className="flex justify-between items-center mb-2">
-                      <Badge>{course.nivel}</Badge>
-                      <span className="text-xs text-muted-foreground">En progreso</span>
+                      <Badge variant="secondary">{course.nivel}</Badge>
+                      <span className="text-xs text-muted-foreground">Módulo 1/2</span>
                     </div>
-                    <CardTitle>{course.nombre}</CardTitle>
-                    <CardDescription>{course.descripcion}</CardDescription>
+                    <CardTitle className="line-clamp-1">{course.nombre}</CardTitle>
+                    <CardDescription className="line-clamp-1">{course.descripcion}</CardDescription>
                   </CardHeader>
                   <CardContent className="py-2">
                      <div className="space-y-1">
-                       <div className="flex justify-between text-xs">
+                       <div className="flex justify-between text-xs font-medium">
                          <span>Progreso</span>
                          <span>{courseProgress[course.id] || 0}%</span>
                        </div>
@@ -161,17 +170,14 @@ export default function YoungDashboard() {
             </div>
           </TabsContent>
           
-          <TabsContent value="history">
-            <div className="text-center py-12 text-muted-foreground">
-              <CheckCircle className="h-12 w-12 mx-auto mb-4 opacity-20" />
-              <p>Aún no tienes trabajos completados en tu historial.</p>
-            </div>
+          <TabsContent value="stats" className="animate-in fade-in duration-500">
+             <StatsDashboard role="JOVEN" />
           </TabsContent>
         </Tabs>
 
         {/* Course Dialog */}
         <Dialog open={!!activeCourse} onOpenChange={(open) => !open && setActiveCourse(null)}>
-          <DialogContent className="sm:max-w-[800px]">
+          <DialogContent className="sm:max-w-[800px] h-[90vh] sm:h-auto overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-2xl font-serif">{activeCourse?.nombre}</DialogTitle>
               <DialogDescription>
@@ -179,45 +185,73 @@ export default function YoungDashboard() {
               </DialogDescription>
             </DialogHeader>
             
-            <div className="py-6">
-              <div className="aspect-video bg-black/90 rounded-lg flex items-center justify-center mb-6 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
-                  <div className="w-full">
-                    <div className="h-1 bg-white/30 rounded-full w-full mb-2">
-                      <div className="h-full bg-primary w-1/3 rounded-full"></div>
-                    </div>
-                    <div className="flex justify-between text-white/80 text-xs">
+            <div className="py-6 space-y-6">
+              {/* Video Player Mock */}
+              <div className="aspect-video bg-black rounded-xl flex items-center justify-center relative overflow-hidden group shadow-2xl">
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1000&auto=format&fit=crop')] bg-cover opacity-50"></div>
+                <PlayCircle className="h-24 w-24 text-white/90 cursor-pointer hover:text-white hover:scale-110 transition-all z-10 drop-shadow-lg" />
+                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+                   <div className="h-1 bg-white/30 rounded-full w-full mb-2">
+                      <div className="h-full bg-primary w-1/3 rounded-full relative">
+                        <div className="absolute right-0 top-1/2 -translate-y-1/2 h-3 w-3 bg-white rounded-full shadow"></div>
+                      </div>
+                   </div>
+                   <div className="flex justify-between text-white/90 text-xs font-medium">
                       <span>05:20</span>
                       <span>15:00</span>
-                    </div>
-                  </div>
+                   </div>
                 </div>
-                <PlayCircle className="h-20 w-20 text-white/80 cursor-pointer hover:text-white hover:scale-105 transition-all" />
               </div>
               
               <div className="space-y-4">
-                <h3 className="font-bold text-lg">Contenido del Módulo 1</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  En esta lección aprenderemos los conceptos fundamentales necesarios para dominar esta habilidad. 
-                  Comenzaremos con una introducción teórica y luego pasaremos a ejercicios prácticos.
-                </p>
-                <div className="bg-muted/30 p-4 rounded-lg border border-border">
-                  <h4 className="font-semibold text-sm mb-2">Recursos Descargables</h4>
-                  <ul className="text-sm space-y-1 text-primary">
-                    <li className="hover:underline cursor-pointer">• Guía de estudio (PDF)</li>
-                    <li className="hover:underline cursor-pointer">• Archivos de práctica (ZIP)</li>
-                  </ul>
+                <div className="flex items-center justify-between">
+                   <h3 className="font-bold text-lg">Módulos del Curso</h3>
+                   <Badge variant="outline" className="gap-1">
+                     <Award className="h-3 w-3" /> Certificado al completar
+                   </Badge>
+                </div>
+                
+                <div className="space-y-2">
+                   {activeCourse?.modules?.map((mod, idx) => (
+                     <div key={mod.id} className={`p-4 rounded-lg border flex items-center justify-between ${mod.completed ? 'bg-muted/50 border-transparent' : 'bg-card border-border'}`}>
+                        <div className="flex items-center gap-3">
+                           <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-bold ${mod.completed ? 'bg-green-100 text-green-700' : 'bg-secondary text-primary'}`}>
+                             {mod.completed ? <Check className="h-4 w-4" /> : idx + 1}
+                           </div>
+                           <div>
+                             <p className="font-medium text-sm">{mod.title}</p>
+                             <p className="text-xs text-muted-foreground">{mod.duration}</p>
+                           </div>
+                        </div>
+                        {mod.quiz && (
+                          <Button size="sm" variant="secondary" onClick={() => setShowQuiz(true)}>
+                            Realizar Quiz
+                          </Button>
+                        )}
+                     </div>
+                   ))}
                 </div>
               </div>
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setActiveCourse(null)}>Cerrar</Button>
+              <Button variant="ghost" onClick={() => setActiveCourse(null)}>Cerrar</Button>
               <Button className="bg-primary">Siguiente Lección</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Quiz Modal */}
+        {activeCourse?.modules?.[1]?.quiz && (
+           <QuizModal 
+             isOpen={showQuiz} 
+             onClose={() => setShowQuiz(false)} 
+             questions={activeCourse.modules[1].quiz}
+             courseTitle={activeCourse.nombre}
+           />
+        )}
       </div>
+      <ChatWidget />
     </Layout>
   );
 }
